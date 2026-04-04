@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'features/home/presentation/pages/home_page.dart';
 
 void main() {
-  runApp(const AnimeCatalogApp());
+  runApp(const RingoApp());
 }
 
-class AnimeCatalogApp extends StatelessWidget {
-  const AnimeCatalogApp({super.key});
+class RingoApp extends StatelessWidget {
+  const RingoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
