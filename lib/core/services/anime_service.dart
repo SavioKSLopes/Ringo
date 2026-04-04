@@ -17,4 +17,16 @@ class AnimeService {
       throw Exception('Erro ao buscar animes');
     }
   }
+  Future<List<AnimeModel>> searchAnime(String query) async {
+    final url = Uri.parse('https://api.jikan.moe/v4/anime?q=$query');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final List list = data['data'];
+      return list.map((item) => AnimeModel.fromJson(item)).toList();
+    } else {
+      throw Exception('Erro ao buscar anime');
+    }
+  }
 }
