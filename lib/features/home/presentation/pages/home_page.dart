@@ -1,112 +1,46 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../../core/services/anime_service.dart';
-import '../../../anime/data/models/anime_model.dart';
+import '../../../../app/app_routes.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late Future<List<AnimeModel>> futureAnime;
-  final AnimeService animeService = AnimeService();
-  final TextEditingController searchController = TextEditingController();
-  Timer? _debounce;
-
-  @override
-  void initState() {
-    super.initState();
-    futureAnime = animeService.fetchTopAnime();
-  }
-
-  void onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        if (query.trim().isEmpty) {
-          futureAnime = animeService.fetchTopAnime();
-        } else {
-          futureAnime = animeService.searchAnime(query.trim());
-        }
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    searchController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo de Animes'),
+        title: const Text('RINGO'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: 'Pesquisar anime...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: onSearchChanged,
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 20),
+            const Icon(Icons.movie_filter, size: 90),
+            const SizedBox(height: 20),
+            const Text(
+              'Bem-vindo ao catálogo de animes e mangás',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<AnimeModel>>(
-              future: futureAnime,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Erro: ${snapshot.error}'),
-                  );
-                }
-
-                final animes = snapshot.data ?? [];
-
-                if (animes.isEmpty) {
-                  return const Center(
-                    child: Text('Nenhum anime encontrado'),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: animes.length,
-                  itemBuilder: (context, index) {
-                    final anime = animes[index];
-
-                    return ListTile(
-                      leading: Image.network(
-                        anime.imageUrl,
-                        width: 50,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(anime.title),
-                      subtitle: Text('Nota: ${anime.score}'),
-                    );
-                  },
-                );
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.search);
               },
+              icon: const Icon(Icons.search),
+              label: const Text('Ir para busca'),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.favorites);
+              },
+              icon: const Icon(Icons.favorite),
+              label: const Text('Ver favoritos'),
+            ),
+          ],
+        ),
       ),
     );
   }
