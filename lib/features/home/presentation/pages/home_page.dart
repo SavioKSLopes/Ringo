@@ -8,7 +8,26 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RINGO'),
+        backgroundColor: Colors.red,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/ringo_logo.png',
+              height: 36,
+              color: Colors.white,
+              colorBlendMode: BlendMode.srcIn,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Ringo',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

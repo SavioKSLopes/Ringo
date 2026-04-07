@@ -26,7 +26,34 @@ class RingoApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'RINGO',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.dark,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.red,
+          secondary: Colors.redAccent,
+          surface: Color(0xFF1A1A1A),
+          onPrimary: Colors.white,
+          onSurface: Colors.white,
+        ),
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1A1A1A),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+          ),
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white70),
+          titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.red,
+        ),
         useMaterial3: true,
       ),
       initialRoute: AppRoutes.home,
