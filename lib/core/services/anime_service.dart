@@ -41,4 +41,18 @@ class AnimeService {
       throw Exception('Erro ao buscar mangá');
     }
   }
+  
+  Future<List<AnimeModel>> fetchTopManga() async {
+  final url = Uri.parse('https://api.jikan.moe/v4/top/manga');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    final List list = data['data'];
+    return list.map((item) => AnimeModel.fromJson(item)).toList();
+  } else {
+    throw Exception('Erro ao buscar top mangás');
+  }
 }
+}
+
