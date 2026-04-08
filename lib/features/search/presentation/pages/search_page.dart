@@ -17,7 +17,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  late Future<List<AnimeModel>> futureItems;
+  Future<List<AnimeModel>>? futureItems;
   final AnimeService animeService = AnimeService();
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
@@ -26,34 +26,47 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    futureItems = animeService.fetchTopAnime();
+    _loadDefault(SearchType.anime);
   }
 
-  void performSearch(String query) {
+  void _loadDefault(SearchType type) {
+    setState(() {
+      futureItems = type == SearchType.anime
+          ? animeService.fetchTopAnime()
+          : animeService.fetchTopManga();
+    });
+  }
+
+  void _onTypeChanged(SearchType type) {
+    setState(() {
+      selectedType = type;
+    });
+
+    final text = searchController.text.trim();
+
+    if (text.isEmpty) {
+      _loadDefault(type);
+    } else {
+      _search(text, type);
+    }
+  }
+
+  void _search(String query, SearchType type) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
 
       setState(() {
-        final text = query.trim();
-
-        if (text.isEmpty) {
-          futureItems = animeService.fetchTopAnime();
-        } else {
-          futureItems = selectedType == SearchType.anime
-              ? animeService.searchAnime(text)
-              : animeService.searchManga(text);
-        }
+        futureItems = type == SearchType.anime
+            ? animeService.searchAnime(query)
+            : animeService.searchManga(query);
       });
     });
   }
 
-  void changeType(SearchType type) {
-    setState(() {
-      selectedType = type;
-    });
-    performSearch(searchController.text);
+  void _onSearchChanged(String query) {
+    _search(query.trim(), selectedType);
   }
 
   @override
@@ -88,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
               ],
               selected: {selectedType},
               onSelectionChanged: (selection) {
-                changeType(selection.first);
+                _onTypeChanged(selection.first);
               },
             ),
           ),
@@ -105,7 +118,7 @@ class _SearchPageState extends State<SearchPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onChanged: performSearch,
+              onChanged: _onSearchChanged,
             ),
           ),
           Expanded(
@@ -137,7 +150,8 @@ class _SearchPageState extends State<SearchPage> {
 
                     return Consumer<FavoritesController>(
                       builder: (context, favoritesController, child) {
-                        final isFavorite = favoritesController.isFavorite(item);
+                        final isFavorite =
+                            favoritesController.isFavorite(item);
 
                         return ListTile(
                           leading: Image.network(
