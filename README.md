@@ -1,17 +1,22 @@
-# ringo
+# RINGO
 
-A new Flutter project.
+Aplicativo mobile desenvolvido em Flutter como trabalho da disciplina de **Laboratório de Programação para Dispositivos Móveis e Sem Fio** — 5º semestre, Análise e Desenvolvimento de Sistemas.
 
-## Getting Started
+O app permite buscar animes e mangás, filtrar por gêneros e salvar favoritos, consumindo dados da [Jikan API](https://jikan.moe/).
 
-This project is a starting point for a Flutter application.
+## Telas
 
-A few resources to get you started if this is your first Flutter project:
+- Home, Busca, Detalhes e Favoritos
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Como executar
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+git clone https://github.com/SavioKSLopes/Ringo.git
+cd Ringo
+flutter pub get
+flutter run
+```
+
+## Autor
+
+Sávio Lopes
