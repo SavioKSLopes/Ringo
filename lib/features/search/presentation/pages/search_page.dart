@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../app/app_routes.dart';
 import '../../../../core/services/anime_service.dart';
 import '../../../anime/data/models/anime_model.dart';
+import '../../../anime/data/models/genre_model.dart';
 import '../../../favorites/controller/favorites_controller.dart';
 
 enum SearchType { anime, manga }
@@ -18,15 +19,27 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   Future<List<AnimeModel>>? futureItems;
+  Future<List<GenreModel>>? futureGenres;
   final AnimeService animeService = AnimeService();
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
   SearchType selectedType = SearchType.anime;
+  Set<int> selectedGenreIds = {};
 
   @override
   void initState() {
     super.initState();
     _loadDefault(SearchType.anime);
+    _loadGenres(SearchType.anime);
+  }
+
+  void _loadGenres(SearchType type) {
+    setState(() {
+      selectedGenreIds = {};
+      futureGenres = type == SearchType.anime
+          ? animeService.fetchAnimeGenres()
+          : animeService.fetchMangaGenres();
+    });
   }
 
   void _loadDefault(SearchType type) {
@@ -40,33 +53,56 @@ class _SearchPageState extends State<SearchPage> {
   void _onTypeChanged(SearchType type) {
     setState(() {
       selectedType = type;
+      selectedGenreIds = {};
     });
 
-    final text = searchController.text.trim();
-
-    if (text.isEmpty) {
-      _loadDefault(type);
-    } else {
-      _search(text, type);
-    }
+    searchController.clear();
+    _loadGenres(type);
+    _loadDefault(type);
   }
 
-  void _search(String query, SearchType type) {
+  void _onGenreSelected(int genreId) {
+    setState(() {
+      if (selectedGenreIds.contains(genreId)) {
+        selectedGenreIds.remove(genreId);
+      } else {
+        selectedGenreIds.add(genreId);
+      }
+
+      if (selectedGenreIds.isEmpty) {
+        _loadDefault(selectedType);
+      } else {
+        final genreParam = selectedGenreIds.join(',');
+        final category = selectedType == SearchType.anime ? 'anime' : 'manga';
+        final url = Uri.parse(
+            'https://api.jikan.moe/v4/$category?genres=$genreParam');
+        futureItems = animeService.searchRaw(url);
+      }
+    });
+  }
+
+  void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
 
       setState(() {
-        futureItems = type == SearchType.anime
-            ? animeService.searchAnime(query)
-            : animeService.searchManga(query);
+        final text = query.trim();
+        final category = selectedType == SearchType.anime ? 'anime' : 'manga';
+        final genreParam = selectedGenreIds.isNotEmpty
+            ? '&genres=${selectedGenreIds.join(',')}'
+            : '';
+
+        if (text.isEmpty && selectedGenreIds.isEmpty) {
+          _loadDefault(selectedType);
+        } else {
+          final url = Uri.parse(
+              'https://api.jikan.moe/v4/$category?q=$text$genreParam');
+          futureItems = animeService.searchRaw(url);
+        }
       });
     });
-  }
-
-  void _onSearchChanged(String query) {
-    _search(query.trim(), selectedType);
   }
 
   @override
@@ -106,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
+            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
             child: TextField(
               controller: searchController,
               decoration: InputDecoration(
@@ -121,6 +157,40 @@ class _SearchPageState extends State<SearchPage> {
               onChanged: _onSearchChanged,
             ),
           ),
+          FutureBuilder<List<GenreModel>>(
+            future: futureGenres,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const SizedBox(height: 8);
+
+              final genres = snapshot.data!;
+
+              return SizedBox(
+                height: 44,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: genres.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    final genre = genres[index];
+                    final isSelected = selectedGenreIds.contains(genre.malId);
+
+                    return FilterChip(
+                      label: Text(genre.name),
+                      selected: isSelected,
+                      onSelected: (_) => _onGenreSelected(genre.malId),
+                      selectedColor: Colors.red,
+                      checkmarkColor: Colors.white,
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : null,
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
           Expanded(
             child: FutureBuilder<List<AnimeModel>>(
               future: futureItems,
