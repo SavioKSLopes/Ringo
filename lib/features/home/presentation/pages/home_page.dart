@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../../../app/app_routes.dart';
+import '../../../../app/widgets/app_drawer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,56 +9,52 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/ringo_logo.png',
-              height: 36,
-              color: Colors.white,
-              colorBlendMode: BlendMode.srcIn,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Ringo',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
-            ),
-          ],
-        ),
+        title: const Text('RINGO'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-            const Icon(Icons.movie_filter, size: 90),
-            const SizedBox(height: 20),
             const Text(
-              'Bem-vindo ao catálogo de animes e mangás',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.search);
-              },
-              icon: const Icon(Icons.search),
-              label: const Text('Ir para busca'),
+              'Bem-vindo ao RINGO',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
             ),
             const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.favorites);
-              },
-              icon: const Icon(Icons.favorite),
-              label: const Text('Ver favoritos'),
+            const Text(
+              'Explore animes e mangás, faça buscas por gênero e monte sua lista de favoritos.',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.search);
+                },
+                icon: const Icon(Icons.search),
+                label: const Text('Buscar agora'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.favorites);
+                },
+                icon: const Icon(Icons.favorite),
+                label: const Text('Ver favoritos'),
+              ),
             ),
           ],
         ),

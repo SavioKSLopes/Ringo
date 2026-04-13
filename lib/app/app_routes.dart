@@ -1,6 +1,6 @@
 class AppRoutes {
-  static const home = '/';
-  static const search = '/search';
-  static const details = '/details';
-  static const favorites = '/favorites';
+  static const String home = '/';
+  static const String search = '/search';
+  static const String details = '/details';
+  static const String favorites = '/favorites';
 }

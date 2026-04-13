@@ -7,6 +7,7 @@ import '../../../../core/services/anime_service.dart';
 import '../../../anime/data/models/anime_model.dart';
 import '../../../anime/data/models/genre_model.dart';
 import '../../../favorites/controller/favorites_controller.dart';
+import '../../../../app/widgets/app_drawer.dart';
 
 enum SearchType { anime, manga }
 
@@ -115,9 +116,10 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
-        title: const Text('Buscar'),
-      ),
+      title: const Text('Buscar'),
+)     ,
       body: Column(
         children: [
           Padding(

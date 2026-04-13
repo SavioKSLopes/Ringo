@@ -39,6 +39,7 @@ class RingoApp extends StatelessWidget {
           backgroundColor: Color(0xFF1A1A1A),
           foregroundColor: Colors.white,
           elevation: 0,
+          centerTitle: true,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -49,7 +50,10 @@ class RingoApp extends StatelessWidget {
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Colors.white70),
-          titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         iconTheme: const IconThemeData(
           color: Colors.red,
